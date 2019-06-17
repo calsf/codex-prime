@@ -22,8 +22,7 @@ session = loop.run_until_complete(create_session())
 # Make request and convert json data
 async def endpoint(data):
     async with session.get(f'https://api.warframestat.us/pc/{data}') as res:
-        info = await res.json()
-        return info
+        return await res.json()
 
 
 @bot.event
