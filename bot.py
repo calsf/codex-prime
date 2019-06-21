@@ -7,19 +7,21 @@ from discord.ext import commands
 import aiohttp
 import asyncio
 
+# Bot setup
 bot = commands.Bot(command_prefix='!')
+bot.remove_command('help')
 token = config.DISCORD_TOKEN
 
-# Users to notify for next day/night cycle // user: [time before to notify, has been notified]
-cetus_dict = {}
-is_day = True
 
-
-# Single session
+# Create single session
 async def create_session():
     return aiohttp.ClientSession()
 loop = asyncio.get_event_loop()
 session = loop.run_until_complete(create_session())
+
+# Users to notify for next day/night cycle // user: [time before to notify, has been notified]
+cetus_dict = {}
+is_day = True
 
 
 # Make request and convert json data
@@ -52,22 +54,26 @@ async def cycle(ctx):
         current_cycle = 'Day'
     else:
         current_cycle = 'Night'
-    await ctx.send(f'Currently: {current_cycle}\nTime Left: {time_left}')
+
+    embed = discord.Embed()
+    embed.add_field(name='Current Cycle', value=current_cycle, inline=False)
+    embed.add_field(name='Time Left', value=time_left, inline=False)
+    await ctx.send(embed=embed)
 
 
 # Add user of command to the cetus_dict to be notified of next day/night cycle, default time to notify will be 5 minutes
 @bot.command()
-async def alrtcycle(ctx, time='5'):
+async def atcycle(ctx, time='5'):
     try:
-        if int(time) > 59 or int(time) < 1:
-            await ctx.send(ctx.message.author.mention + ' Enter a time between 1-59')
+        if int(time) > 30 or int(time) < 1:
+            await ctx.send(ctx.message.author.mention + ' Enter a time between 1-30')
         else:
             cetus_dict[ctx.message.author] = [time, False]
             await ctx.send(
                 ctx.message.author.mention +
                 f' You will now be alerted {time} minutes before the next Cetus day/night cycle.')
     except ValueError:
-        await ctx.send(ctx.message.author.mention + ' Enter a time between 1-59.')
+        await ctx.send(ctx.message.author.mention + ' Enter a time between 1-30.')
 
 
 # Remove user of command from the cetus_dict to no longer be notified of next day/night cycle
@@ -81,7 +87,20 @@ async def rmcycle(ctx):
         await ctx.send(ctx.message.author.mention + ' You are currently not being alerted.')
 
 
-# Check time until next cycle, notify if needed // This will be called periodically on_ready
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(title='Command List:')
+    embed.add_field(name='!cycle', value='Show status of current Cetus day/night cycle.', inline=False)
+    embed.add_field(name='!acycle <minutes>', value='Activate alert notification for the next Cetus day/night cycle, '
+                                                    '<minutes> before the next cycle.\n'
+                                                    'Will only notify within 1-30 minutes before (5 minute default).',
+                    inline=False)
+    embed.add_field(name='!rmcycle', value='Stop being alerted for the next Cetus day/night cycle.', inline=False)
+    await ctx.send(embed=embed)
+
+
+# THIS WILL BE PERIODICALLY CALLED on_ready
+# Check time until next cycle, notify if needed
 async def check_cycle(delay):
     await asyncio.sleep(delay)
     # message/ping user below
