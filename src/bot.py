@@ -14,6 +14,8 @@ token = config.DISCORD_TOKEN
 bot.load_extension('cetus')
 bot.load_extension('sortie')
 bot.load_extension('fissure')
+bot.load_extension('rivens')
+bot.load_extension('invasion')
 
 
 @bot.event
@@ -40,6 +42,8 @@ async def help(ctx):
     embed.add_field(name='!fissures <relic>', value='Show current void fissure missions based on <relic>.\n'
                                                     'Lith, Meso, Neo, or Axi <relic> || All relics default',
                     inline=False)
+    embed.add_field(name='!riven <"weapon">', value='Show average prices for a <weapon> riven. '
+                                                    '<"weapon"> Be sure to include quotations!', inline=False)
     await ctx.send(embed=embed)
 
 
