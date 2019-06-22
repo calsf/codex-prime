@@ -1,5 +1,5 @@
 # SORTIE COMMANDS:
-# !sortie
+# !sorties
 
 import discord
 from discord.ext import commands

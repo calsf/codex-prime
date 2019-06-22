@@ -13,6 +13,7 @@ token = config.DISCORD_TOKEN
 # Load extensions
 bot.load_extension('cetus')
 bot.load_extension('sortie')
+bot.load_extension('fissure')
 
 
 @bot.event
@@ -31,12 +32,14 @@ async def help(ctx):
     embed = discord.Embed(title='Command List:')
     embed.add_field(name='!cycle', value='Show status of current Cetus day/night cycle.', inline=False)
     embed.add_field(name='!acycle <minutes>',
-                    value='Activate alert notification for the next Cetus day/night cycle, '
-                          '<minutes> before the next cycle.\n'
-                          'Will only notify within 1-30 minutes before (5 minute default).',
+                    value='Activate alert notification for the next Cetus day/night cycle.\n'
+                          '1-30 <minutes> before the next cycle || 5 minute default.',
                     inline=False)
     embed.add_field(name='!rmcycle', value='Stop being alerted for the next Cetus day/night cycle.', inline=False)
     embed.add_field(name='!sorties', value='Show current sortie missions.', inline=False)
+    embed.add_field(name='!fissures <relic>', value='Show current void fissure missions based on <relic>.\n'
+                                                    'Lith, Meso, Neo, or Axi <relic> || All relics default',
+                    inline=False)
     await ctx.send(embed=embed)
 
 
