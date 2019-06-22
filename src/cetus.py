@@ -10,8 +10,8 @@ from src import sess
 class Cetus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.cetus_dict = {}
-        self.is_day = True
+        self.cetus_dict = {}  # user : time before cycle, has been notified
+        self.is_day = True  # To check if the cycle has changed since last check_cycle/reset user notify
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -66,14 +66,14 @@ class Cetus(commands.Cog):
     # THIS WILL BE PERIODICALLY CALLED on_ready
     # Check time until next cycle, notify if needed
     async def check_cycle(self, delay):
+        # Wait before making request
         await asyncio.sleep(delay)
-        # message/ping user below
         cetus_cycle = await sess.request('cetusCycle')
 
         # Check for time left (if has an hour or no minutes, default to 100 time_check
         time_left = cetus_cycle.get('timeLeft')
         if time_left.__contains__('h') or not time_left.__contains__('m'):
-            time_check = 100  # Will never notify for 100 as notify range is 1-59
+            time_check = 100  # Will never notify for 100 due to being outside notify range
         else:
             time_check = time_left.split('m')[0]  # Only check for minutes
 

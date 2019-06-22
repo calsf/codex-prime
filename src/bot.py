@@ -12,6 +12,7 @@ token = config.DISCORD_TOKEN
 
 # Load extensions
 bot.load_extension('cetus')
+bot.load_extension('sortie')
 
 
 @bot.event
@@ -35,6 +36,7 @@ async def help(ctx):
                           'Will only notify within 1-30 minutes before (5 minute default).',
                     inline=False)
     embed.add_field(name='!rmcycle', value='Stop being alerted for the next Cetus day/night cycle.', inline=False)
+    embed.add_field(name='!sorties', value='Show current sortie missions.', inline=False)
     await ctx.send(embed=embed)
 
 
