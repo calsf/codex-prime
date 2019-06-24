@@ -39,8 +39,11 @@ async def help(ctx):
                     inline=False)
     embed.add_field(name='!rmcycle', value='Stop being alerted for the next Cetus day/night cycle.', inline=False)
     embed.add_field(name='!sorties', value='Show current sortie missions.', inline=False)
-    embed.add_field(name='!fissures <relic>', value='Show current void fissure missions based on <relic>.\n'
-                                                    'Lith, Meso, Neo, or Axi <relic> || All relics default',
+    embed.add_field(name='!fissures <relic or "missiontype">', value='Show current void fissure missions based on <relic or "missiontype">.\n'
+                                                                     'Lith, Meso, Neo, or Axi <relic>\n'
+                                                                     '<"missiontype"> Capture, Survival, Extermination,'
+                                                                     ' Excavation, Defense, Mobile Defense,'
+                                                                     ' Rescue, Interception, Sabotage, Spy',
                     inline=False)
     embed.add_field(name='!atfissures <"missiontype">', value='Activate alert notification for updated <missiontype> '
                                                               'Void Fissures. \n <"missiontype">'

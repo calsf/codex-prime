@@ -1,5 +1,5 @@
 # FISSURE COMMANDS:
-# !fissures <relic> // !atfissures <"mission type"> // !rmfissures
+# !fissures <relic or "missiontype"> // !atfissures <"mission type"> // !rmfissures
 
 import discord
 from discord.ext import commands
@@ -19,30 +19,40 @@ class Fissures(commands.Cog):
             await asyncio.gather(self.check_fissures(5))
 
     @commands.command()
-    async def fissures(self, ctx, relic=''):
+    async def fissures(self, ctx, filter_by=''):
+        valid_type = {'capture', 'survival', 'extermination', 'excavation', 'mobile defense', 'defense',
+                      'rescue', 'interception', 'sabotage', 'spy'}
+
         fissures = await sess.request('fissures')
 
-        # Organize void fissure missions into relic tiers
+        # Organize void fissure missions into mission type, default sort by relic type
         fissures = sorted(fissures, key=itemgetter('tierNum'))
-        relic_tiers = {'Lith': [], 'Meso': [], 'Neo': [], 'Axi': []}
-        for mission in fissures:
-            tier = mission['tierNum']
-            if tier == 1:
-                relic_tiers['Lith'].append(mission)
-            elif tier == 2:
-                relic_tiers['Meso'].append(mission)
-            elif tier == 3:
-                relic_tiers['Neo'].append(mission)
-            elif tier == 4:
-                relic_tiers['Axi'].append(mission)
+        if filter_by.lower() in valid_type:
+            filtered = {'capture': [], 'survival': [], 'extermination': [], 'excavation': [], 'mobile defense': [],
+                        'defense': [], 'rescue': [], 'interception': [], 'sabotage': [], 'spy': []}
+            for mission in fissures:
+                mission_type = mission['missionType'].lower()
+                filtered[mission_type].append(mission)
+        else:
+            filtered = {'Lith': [], 'Meso': [], 'Neo': [], 'Axi': []}
+            for mission in fissures:
+                tier = mission['tierNum']
+                if tier == 1:
+                    filtered['Lith'].append(mission)
+                elif tier == 2:
+                    filtered['Meso'].append(mission)
+                elif tier == 3:
+                    filtered['Neo'].append(mission)
+                elif tier == 4:
+                    filtered['Axi'].append(mission)
 
         embed = discord.Embed(title='Void Fissures')
-        for tier in relic_tiers.keys():
-            # Show specific relic missions if specified
-            if tier.lower() == relic.lower():
-                embed = discord.Embed(title=f'{tier} Fissures')
+        for k in filtered.keys():
+            # Show specific missions based on filtered_by
+            if k.lower() == filter_by.lower():
+                embed = discord.Embed(title=f'{k.title()} Void Fissures')
                 embed.clear_fields()
-                for mission in relic_tiers[tier]:
+                for mission in filtered[k]:
                     embed.add_field(name=f'{mission["node"]}',
                                     value=f'{mission["missionType"]} - {mission["enemy"]}\n'
                                     f'{mission["tier"]} Fissure\n'
@@ -51,7 +61,7 @@ class Fissures(commands.Cog):
                 return
             # Else show all void fissure missions
             else:
-                for mission in relic_tiers[tier]:
+                for mission in filtered[k]:
                     embed.add_field(name=f'{mission["node"]}',
                                     value=f'{mission["missionType"]} - {mission["enemy"]}\n'
                                     f'{mission["tier"]} Fissure\n'
