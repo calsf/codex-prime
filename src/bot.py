@@ -42,6 +42,10 @@ async def help(ctx):
     embed.add_field(name='!fissures <relic>', value='Show current void fissure missions based on <relic>.\n'
                                                     'Lith, Meso, Neo, or Axi <relic> || All relics default',
                     inline=False)
+    embed.add_field(name='!atfissures <"missiontype">', value='Activate alert notification for updated <missiontype> '
+                                                              'Void Fissures. \n <"missiontype">'
+                                                              ' Be sure to include quotations!', inline=False)
+    embed.add_field(name='!rmfissures', value='Stop being alerted for Void Fissures.', inline=False)
     embed.add_field(name='!riven <"weapon">', value='Show average prices for a <weapon> riven. '
                                                     '<"weapon"> Be sure to include quotations!', inline=False)
     await ctx.send(embed=embed)

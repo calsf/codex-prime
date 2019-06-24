@@ -47,6 +47,8 @@ class Cetus(commands.Cog):
                 await ctx.send(ctx.message.author.mention + ' Enter a time between 1-30')
             else:
                 self.cetus_dict[ctx.message.author] = [time, False]
+                self.cetus_dict['gg'] = [time, False]
+
                 await ctx.send(
                     ctx.message.author.mention +
                     f' You will now be alerted {time} minutes before the next Cetus day/night cycle.')
