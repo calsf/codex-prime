@@ -1,5 +1,5 @@
 # FISSURE COMMANDS:
-# !fissures <relic or "missiontype"> // !atfissures <"mission type"> // !rmfissures
+# !fissures <relic or missiontype> // !atfissures <relic or mission type> // !rmfissures
 
 import discord
 from discord.ext import commands
@@ -19,9 +19,9 @@ class Fissures(commands.Cog):
             await asyncio.gather(self.check_fissures(5))
 
     @commands.command()
-    async def fissures(self, ctx, filter_by=''):
-        valid_type = {'capture', 'survival', 'extermination', 'excavation', 'mobile defense', 'defense',
-                      'rescue', 'interception', 'sabotage', 'spy'}
+    async def fissures(self, ctx, *, filter_by=''):
+        valid_type = ['capture', 'survival', 'extermination', 'excavation', 'mobile defense', 'defense',
+                      'rescue', 'interception', 'sabotage', 'spy']
 
         fissures = await sess.request('fissures')
 
@@ -68,27 +68,32 @@ class Fissures(commands.Cog):
                                     f'{mission["eta"]}', inline=True)
         await ctx.send(embed=embed)
 
-    # Add user of command to alert_dict to be notified of new <mission> void fissures
+    # Add user of command to alert_dict to be notified of new <filtered_by> void fissures
     @commands.command()
-    async def atfissures(self, ctx, mission=''):
-        valid = {'capture', 'survival', 'extermination', 'excavation', 'mobile defense', 'defense',
-                 'rescue', 'interception', 'sabotage', 'spy'}
+    async def atfissures(self, ctx, *, filtered_by=''):
+        # Valid filters include mission types or relics
+        valid = ['capture', 'survival', 'extermination', 'excavation', 'mobile defense', 'defense',
+                 'rescue', 'interception', 'sabotage', 'spy', 'lith', 'meso', 'neo', 'axi']
         try:
-            if mission.lower() not in valid:
-                await ctx.send(ctx.message.author.mention + ' Enter a valid mission type.\n'
-                                                            'Capture, Survival, Extermination, Excavation, Defense, '
-                                                            'Mobile Defense, Rescue, Interception, Sabotage, Spy')
+            if filtered_by.lower() not in valid:
+                await ctx.send(ctx.message.author.mention + ' Enter a valid mission type or relic.\n'
+                                                            'Mission Types: Capture, Survival, '
+                                                            'Extermination, Excavation, Defense, '
+                                                            'Mobile Defense, Rescue, Interception, Sabotage, Spy\n'
+                                                            'Relics: Lith, Meso, Neo, Axi')
             else:
-                self.alert_dict[ctx.message.author] = [mission.title(), []]
+                self.alert_dict[ctx.message.author] = [filtered_by.title(), []]
                 await ctx.send(
                     ctx.message.author.mention +
-                    f' You will now be alerted for new {mission.title()} Void Fissures.')
+                    f' You will now be alerted for new {filtered_by.title()} Void Fissures.')
         except ValueError:
-            await ctx.send(ctx.message.author.mention + ' Enter a valid mission type.\n'
-                                                        'Capture, Survival, Extermination, Excavation, Defense, '
-                                                        'Mobile Defense, Rescue, Interception, Sabotage, Spy')
+            await ctx.send(ctx.message.author.mention + ' Enter a valid mission type or relic.\n'
+                                                        'Mission Types: Capture, Survival, '
+                                                        'Extermination, Excavation, Defense, '
+                                                        'Mobile Defense, Rescue, Interception, Sabotage, Spy\n'
+                                                        'Relics: Lith, Meso, Neo, Axi')
 
-    # Remove user of command from the cetus_dict to no longer be notified of next day/night cycle
+    # Remove user of command from the alert_dict to no longer be notified of void fissures
     @commands.command()
     async def rmfissures(self, ctx):
         try:
@@ -108,11 +113,21 @@ class Fissures(commands.Cog):
         fissures = sorted(fissures, key=itemgetter('tierNum'))
         embed = discord.Embed(title='Void Fissures')
 
+        relics = ['lith', 'meso', 'neo', 'axi']  # Valid relics
+
         # Check each user's tracked mission type
         for user in self.alert_dict.keys():
             user_fissures = []
+
+            # Check if user's filter is for relics/tier or mission type
+            if self.alert_dict[user][0].lower() in relics:
+                filter_val = 'tier'
+            else:
+                filter_val = 'missionType'
+
+            # Iterate through all fissure missions and filter based on tier or mission type
             for mission in fissures:
-                if mission['missionType'].lower() == self.alert_dict[user][0].lower():
+                if mission[filter_val].lower() == self.alert_dict[user][0].lower():
                     embed.add_field(name=f'{mission["node"]}',
                                     value=f'{mission["missionType"]} - {mission["enemy"]}\n'
                                     f'{mission["tier"]} Fissure\n'
@@ -122,12 +137,12 @@ class Fissures(commands.Cog):
             # If fissure missions based on 'node' have been updated from last check, notify user
             if len(self.alert_dict[user][1]) != len(user_fissures):  # If lengths do not match, alert of update
                 self.alert_dict[user][1] = user_fissures.copy()
-                await user.send(f'{self.alert_dict[user][0]} missions have been updated!', embed=embed)
+                await user.send(f'{self.alert_dict[user][0]} Void Fissures have been updated!', embed=embed)
             else:
                 for i in range(len(self.alert_dict[user][1])):  # Else check each mission node
                     if self.alert_dict[user][1][i]['node'] != user_fissures[i]['node']:
                         self.alert_dict[user][1] = fissures.copy()
-                        await user.send(f'{self.alert_dict[user][0]} missions have been updated!', embed=embed)
+                        await user.send(f'{self.alert_dict[user][0]} Void Fissures have been updated!', embed=embed)
                         return
 
 
