@@ -21,7 +21,7 @@ class Fissures(commands.Cog):
     @commands.command()
     async def fissures(self, ctx, *, filter_by=''):
         valid_type = ['capture', 'survival', 'extermination', 'excavation', 'mobile defense', 'defense',
-                      'rescue', 'interception', 'sabotage', 'spy']
+                      'rescue', 'interception', 'sabotage', 'spy', 'hive']
 
         fissures = await sess.request('fissures')
 
@@ -29,10 +29,14 @@ class Fissures(commands.Cog):
         fissures = sorted(fissures, key=itemgetter('tierNum'))
         if filter_by.lower() in valid_type:
             filtered = {'capture': [], 'survival': [], 'extermination': [], 'excavation': [], 'mobile defense': [],
-                        'defense': [], 'rescue': [], 'interception': [], 'sabotage': [], 'spy': []}
+                        'defense': [], 'rescue': [], 'interception': [], 'sabotage': [], 'spy': [], 'hive': []}
             for mission in fissures:
-                mission_type = mission['missionType'].lower()
-                filtered[mission_type].append(mission)
+                # Ignore any invalid mission types that are found
+                try:
+                    mission_type = mission['missionType'].lower()
+                    filtered[mission_type].append(mission)
+                except Exception as e:
+                    print('Unknown mission type: ' + str(e))
         else:
             filtered = {'Lith': [], 'Meso': [], 'Neo': [], 'Axi': []}
             for mission in fissures:
@@ -46,11 +50,10 @@ class Fissures(commands.Cog):
                 elif tier == 4:
                     filtered['Axi'].append(mission)
 
-        embed = discord.Embed(title='Void Fissures')
         for k in filtered.keys():
+            embed = discord.Embed(title=f'{k.title()} Void Fissures')
             # Show specific missions based on filtered_by
             if k.lower() == filter_by.lower():
-                embed = discord.Embed(title=f'{k.title()} Void Fissures')
                 embed.clear_fields()
                 for mission in filtered[k]:
                     embed.add_field(name=f'{mission["node"]}',
@@ -73,13 +76,14 @@ class Fissures(commands.Cog):
     async def atfissures(self, ctx, *, filtered_by=''):
         # Valid filters include mission types or relics
         valid = ['capture', 'survival', 'extermination', 'excavation', 'mobile defense', 'defense',
-                 'rescue', 'interception', 'sabotage', 'spy', 'lith', 'meso', 'neo', 'axi']
+                 'rescue', 'interception', 'sabotage', 'spy', 'hive', 'lith', 'meso', 'neo', 'axi']
         try:
             if filtered_by.lower() not in valid:
                 await ctx.send(ctx.message.author.mention + ' Enter a valid mission type or relic.\n'
                                                             'Mission Types: Capture, Survival, '
                                                             'Extermination, Excavation, Defense, '
-                                                            'Mobile Defense, Rescue, Interception, Sabotage, Spy\n'
+                                                            'Mobile Defense, Rescue, Interception,'
+                                                            ' Sabotage, Spy, Hive\n'
                                                             'Relics: Lith, Meso, Neo, Axi')
             else:
                 self.alert_dict[ctx.message.author] = [filtered_by.title(), []]
@@ -90,7 +94,7 @@ class Fissures(commands.Cog):
             await ctx.send(ctx.message.author.mention + ' Enter a valid mission type or relic.\n'
                                                         'Mission Types: Capture, Survival, '
                                                         'Extermination, Excavation, Defense, '
-                                                        'Mobile Defense, Rescue, Interception, Sabotage, Spy\n'
+                                                        'Mobile Defense, Rescue, Interception, Sabotage, Spy, Hive\n'
                                                         'Relics: Lith, Meso, Neo, Axi')
 
     # Remove user of command from the alert_dict to no longer be notified of void fissures
