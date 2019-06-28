@@ -50,10 +50,11 @@ class Fissures(commands.Cog):
                 elif tier == 4:
                     filtered['Axi'].append(mission)
 
+        embed = discord.Embed(title=f'Void Fissures')
         for k in filtered.keys():
-            embed = discord.Embed(title=f'{k.title()} Void Fissures')
             # Show specific missions based on filtered_by
             if k.lower() == filter_by.lower():
+                embed = discord.Embed(title=f'{k.title()} Void Fissures')  # Change title to filtered by Void Fissures
                 embed.clear_fields()
                 for mission in filtered[k]:
                     embed.add_field(name=f'{mission["node"]}',
@@ -108,7 +109,7 @@ class Fissures(commands.Cog):
             await ctx.send(ctx.message.author.mention + ' You are currently not being alerted.')
 
     # THIS WILL BE PERIODICALLY CALLED on_ready
-    # Check for new void fissure missions
+    # Check for new/specific void fissure missions for each user
     async def check_fissures(self, delay):
         # Wait before making request
         await asyncio.sleep(delay)
@@ -121,6 +122,7 @@ class Fissures(commands.Cog):
 
         # Check each user's tracked mission type
         for user in self.alert_dict.keys():
+            embed.clear_fields()
             user_fissures = []
 
             # Check if user's filter is for relics/tier or mission type

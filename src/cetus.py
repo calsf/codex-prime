@@ -30,12 +30,14 @@ class Cetus(commands.Cog):
         time_left = cetus_cycle.get('timeLeft')
         if cetus_cycle.get('isDay'):
             current_cycle = 'Day'
+            next_cycle = 'Night'
         else:
             current_cycle = 'Night'
+            next_cycle = 'Day'
 
         embed = discord.Embed()
         embed.add_field(name='Current Cycle', value=current_cycle, inline=False)
-        embed.add_field(name='Time Left', value=time_left, inline=False)
+        embed.add_field(name=f'Time Left Until {next_cycle}', value=time_left, inline=False)
         await ctx.send(embed=embed)
 
     # Add user of command to the cetus_dict to be notified of next day/night cycle
