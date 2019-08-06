@@ -15,6 +15,8 @@ class Fissures(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        print('Fissures Ready')
+
         while True:
             await asyncio.gather(self.check_fissures(5))
 

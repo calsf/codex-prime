@@ -15,6 +15,8 @@ class Cetus(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        print('Cetus Ready')
+
         # Set initial cycle
         cycle = await sess.request('cetusCycle')
         self.is_day = cycle.get('isDay')
