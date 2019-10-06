@@ -14,7 +14,7 @@ class Invasions(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Invasions Ready')
+        print('Invasions Online')
         # Periodically check
         while True:
             await asyncio.gather(self.check_invasions(5))

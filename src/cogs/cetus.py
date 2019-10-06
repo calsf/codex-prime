@@ -15,7 +15,7 @@ class Cetus(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Cetus Ready')
+        print('Cetus Cycle Online')
 
         # Set initial cycle
         cycle = await sess.request('cetusCycle')

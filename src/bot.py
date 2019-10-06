@@ -2,6 +2,7 @@
 # https://docs.warframestat.us
 
 from src import config
+from src.cogs import (cetus, fissure, invasion, rivens, sortie)
 import discord
 from discord.ext import commands
 
@@ -9,13 +10,11 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix='!')
 bot.remove_command('help')
 token = config.DISCORD_TOKEN
-
-# Load extensions
-bot.load_extension('cetus')
-bot.load_extension('sortie')
-bot.load_extension('fissure')
-bot.load_extension('rivens')
-bot.load_extension('invasion')
+cetus.setup(bot)
+fissure.setup(bot)
+invasion.setup(bot)
+rivens.setup(bot)
+sortie.setup(bot)
 
 
 @bot.event
