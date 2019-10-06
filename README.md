@@ -8,8 +8,12 @@ Discord bot for Warframe information and tracking world state status using https
 4. Copy the bot token and set DISCORD_TOKEN in config.py
 5. Navigate to OAuth2 -> Check bot under Scopes and set permissions
 6. Copy and paste link into browser to invite bot into server
-7. Run source code
-
+7. Run bot.py
+ * You can also create an executable using PyInstaller
+   * Install PyInstaller by running "pip install pyinstaller" in command prompt
+   * Once PyInstaller is installed, navigate to src folder
+   * Run "pyinstaller --onefile -i "path_to_icon_file\icon.ico" bot.py
+   * Run the executable file which will be located in the dist folder
 
 ## Features
 - **Cetus Day/Night Cycle**
