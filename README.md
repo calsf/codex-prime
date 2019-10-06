@@ -12,7 +12,7 @@ Discord bot for Warframe information and tracking world state status using https
  * You can also create an executable using PyInstaller
    * Install PyInstaller by running "pip install pyinstaller" in command prompt
    * Once PyInstaller is installed, navigate to src folder
-   * Run "pyinstaller --onefile -i "path_to_icon_file\icon.ico" bot.py
+   * Run "pyinstaller --onefile -i "path_to_icon_file\icon.ico" bot.py"
    * Run the executable file which will be located in the dist folder
 
 ## Features
