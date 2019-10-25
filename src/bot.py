@@ -25,7 +25,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send("Invalid command.")
+        await ctx.send("Invalid command. Enter !help for commands.")
 
 
 @bot.command()
