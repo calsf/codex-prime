@@ -15,20 +15,28 @@ class Cetus(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Cetus Cycle Online')
-
         # Set initial cycle
         cycle = await sess.request('cetusCycle')
+        while cycle is 0:
+            print("Could not retrieve data. Trying again.")
+            cycle = await sess.request('cetusCycle')
+
         self.is_day = cycle.get('isDay')
+
+        print('Cetus Cycle Online')
 
         # Periodically check
         while True:
-            await asyncio.gather(self.check_cycle(20))
+            await asyncio.gather(self.check_cycle(30))
 
     # Check the status of the current cycle and remaining time left
     @commands.command()
     async def cycle(self, ctx):
         cetus_cycle = await sess.request('cetusCycle')
+        if cetus_cycle is 0:
+            print("Could not retrieve data.")
+            return
+
         time_left = cetus_cycle.get('timeLeft')
         if cetus_cycle.get('isDay'):
             current_cycle = 'Day'
@@ -74,6 +82,9 @@ class Cetus(commands.Cog):
         # Wait before making request
         await asyncio.sleep(delay)
         cetus_cycle = await sess.request('cetusCycle')
+        if cetus_cycle is 0:
+            print("Could not retrieve data.")
+            return
 
         # Check for time left (if has an hour or no minutes, default to 100 time_check
         time_left = cetus_cycle.get('timeLeft')

@@ -17,11 +17,15 @@ class Invasions(commands.Cog):
         print('Invasions Online')
         # Periodically check
         while True:
-            await asyncio.gather(self.check_invasions(5))
+            await asyncio.gather(self.check_invasions(50))
 
     @commands.command()
     async def invasions(self, ctx):
         inv = await sess.request('invasions')
+        if inv is 0:
+            print("Could not retrieve data.")
+            return
+
         embed = discord.Embed(title="Invasions")
 
         # Organize invasions into description/type
@@ -79,6 +83,10 @@ class Invasions(commands.Cog):
         # Wait before making request
         await asyncio.sleep(delay)
         inv = await sess.request('invasions')
+        if inv is 0:
+            print("Could not retrieve data.")
+            return
+
         embed = discord.Embed(title="Invasions")
 
         # Organize invasions into description/type

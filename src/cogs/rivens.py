@@ -13,6 +13,9 @@ class Rivens(commands.Cog):
     @commands.command()
     async def riven(self, ctx, *, riven=''):
         riv = await sess.request(f'rivens/search/{riven}')
+        if riv is 0:
+            print("Could not retrieve data.")
+            return
 
         # Iterate through the dictionary of returned rivens, only return if exact match is found
         for key, value in riv.items():

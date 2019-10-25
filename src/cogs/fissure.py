@@ -18,7 +18,7 @@ class Fissures(commands.Cog):
         print('Fissures Online')
 
         while True:
-            await asyncio.gather(self.check_fissures(5))
+            await asyncio.gather(self.check_fissures(45))
 
     @commands.command()
     async def fissures(self, ctx, *, filter_by=''):
@@ -26,6 +26,9 @@ class Fissures(commands.Cog):
                       'rescue', 'interception', 'sabotage', 'spy', 'hive']
 
         fissures = await sess.request('fissures')
+        if fissures is 0:
+            print("Could not retrieve data.")
+            return
 
         # Organize void fissure missions into mission type, default sort by relic type
         fissures = sorted(fissures, key=itemgetter('tierNum'))
@@ -116,6 +119,9 @@ class Fissures(commands.Cog):
         # Wait before making request
         await asyncio.sleep(delay)
         fissures = await sess.request('fissures')
+        if fissures is 0:
+            print("Could not retrieve data.")
+            return
 
         fissures = sorted(fissures, key=itemgetter('tierNum'))
         embed = discord.Embed(title='Void Fissures')

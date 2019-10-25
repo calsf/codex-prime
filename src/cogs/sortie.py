@@ -13,6 +13,10 @@ class Sorties(commands.Cog):
     @commands.command()
     async def sorties(self, ctx):
         sorties = await sess.request('sortie')
+        if sorties is 0:
+            print("Could not retrieve data.")
+            return
+
         boss = sorties.get('boss')
         faction = sorties.get('faction')
         sortie_list = sorties.get('variants')
