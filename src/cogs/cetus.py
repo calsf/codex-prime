@@ -99,11 +99,11 @@ class Cetus(commands.Cog):
         else:
             next_cycle = 'Day'
 
-        # Notify each user if time left matches their time to notify
+        # Notify each user if time left is less than or equal to their time to notify
         # Do not notify user if they have already been notified in this night/day cycle
         for user in self.cetus_dict.keys():
             user_list = self.cetus_dict.get(user)
-            if user_list[0] == time_check and not user_list[1]:
+            if user_list[0] >= time_check and not user_list[1]:
                 self.cetus_dict[user][1] = True
                 await user.send(f'{time_left} until {next_cycle}.')
 
