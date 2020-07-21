@@ -22,7 +22,7 @@ class Invasions(commands.Cog):
     @commands.command()
     async def invasions(self, ctx):
         inv = await sess.request('invasions')
-        if inv is 0:
+        if inv == 0:
             print("Could not retrieve data.")
             return
 
@@ -61,21 +61,20 @@ class Invasions(commands.Cog):
             else:
                 self.alert_dict[ctx.message.author] = [reward, []]
 
-                await ctx.send(
-                    ctx.message.author.mention +
-                    f' You will now be alerted for invasions with a {reward.title()} reward.')
+                await ctx.message.author.send(
+                    f' You will now be alerted for invasions with a {reward.title()} reward.'
+                    ' To stop being alerted, use command "!rminvasions"')
         except ValueError:
-            await ctx.send(ctx.message.author.mention + ' Enter an invasion reward to be alerted for.')
+            await ctx.message.author.send('Enter an invasion reward to be alerted for.')
 
     # Remove user of command from the alert_dict to no longer be notified of invasion rewards
     @commands.command()
     async def rminvasions(self, ctx):
         try:
             self.alert_dict.pop(ctx.message.author)
-            await ctx.send(ctx.message.author.mention + ' You are no longer being alerted'
-                                                        ' for the next Cetus day/night cycle.')
+            await ctx.message.author.send('You are no longer being alerted for invasions.')
         except KeyError:
-            await ctx.send(ctx.message.author.mention + ' You are currently not being alerted.')
+            await ctx.message.author.send('You are currently not being alerted.')
 
     # THIS WILL BE PERIODICALLY CALLED on_ready
     # Check for invasions with specific rewards for each user
@@ -83,7 +82,7 @@ class Invasions(commands.Cog):
         # Wait before making request
         await asyncio.sleep(delay)
         inv = await sess.request('invasions')
-        if inv is 0:
+        if inv == 0:
             print("Could not retrieve data.")
             return
 

@@ -17,7 +17,7 @@ class Cetus(commands.Cog):
     async def on_ready(self):
         # Set initial cycle
         cycle = await sess.request('cetusCycle')
-        while cycle is 0:
+        while cycle == 0:
             print("Could not retrieve data. Trying again.")
             cycle = await sess.request('cetusCycle')
 
@@ -33,7 +33,7 @@ class Cetus(commands.Cog):
     @commands.command()
     async def cycle(self, ctx):
         cetus_cycle = await sess.request('cetusCycle')
-        if cetus_cycle is 0:
+        if cetus_cycle == 0:
             print("Could not retrieve data.")
             return
 
@@ -60,9 +60,9 @@ class Cetus(commands.Cog):
             else:
                 self.cetus_dict[ctx.message.author] = [time, False]
 
-                await ctx.send(
-                    ctx.message.author.mention +
-                    f' You will now be alerted {time} minutes before the next Cetus day/night cycle.')
+                await ctx.message.author.send(
+                    f' You will now be alerted {time} minutes before the next Cetus day/night cycle.'
+                    ' To stop being alerted, use command "!rmcycle"')
         except ValueError:
             await ctx.send(ctx.message.author.mention + ' Enter a time between 1-30.')
 
@@ -71,10 +71,9 @@ class Cetus(commands.Cog):
     async def rmcycle(self, ctx):
         try:
             self.cetus_dict.pop(ctx.message.author)
-            await ctx.send(ctx.message.author.mention + ' You are no longer being alerted'
-                                                        ' for the next Cetus day/night cycle.')
+            await ctx.message.author.send('You are no longer being alerted for the next Cetus day/night cycle.')
         except KeyError:
-            await ctx.send(ctx.message.author.mention + ' You are currently not being alerted.')
+            await ctx.message.author.send('You are currently not being alerted.')
 
     # THIS WILL BE PERIODICALLY CALLED on_ready
     # Check time until next cycle, notify if needed
@@ -82,7 +81,7 @@ class Cetus(commands.Cog):
         # Wait before making request
         await asyncio.sleep(delay)
         cetus_cycle = await sess.request('cetusCycle')
-        if cetus_cycle is 0:
+        if cetus_cycle == 0:
             print("Could not retrieve data.")
             return
 

@@ -26,7 +26,7 @@ class Fissures(commands.Cog):
                       'rescue', 'interception', 'sabotage', 'spy', 'hive']
 
         fissures = await sess.request('fissures')
-        if fissures is 0:
+        if fissures == 0:
             print("Could not retrieve data.")
             return
 
@@ -93,9 +93,9 @@ class Fissures(commands.Cog):
                                                             'Relics: Lith, Meso, Neo, Axi')
             else:
                 self.alert_dict[ctx.message.author] = [filtered_by.title(), []]
-                await ctx.send(
-                    ctx.message.author.mention +
-                    f' You will now be alerted for new {filtered_by.title()} Void Fissures.')
+                await ctx.message.author.send(
+                    f' You will now be alerted for new {filtered_by.title()} Void Fissures. '
+                    'To stop being alerted, use command "!rmfissures"')
         except ValueError:
             await ctx.send(ctx.message.author.mention + ' Enter a valid mission type or relic.\n'
                                                         'Mission Types: Capture, Survival, '
@@ -108,10 +108,9 @@ class Fissures(commands.Cog):
     async def rmfissures(self, ctx):
         try:
             self.alert_dict.pop(ctx.message.author)
-            await ctx.send(ctx.message.author.mention + ' You are no longer being alerted'
-                                                        ' for any Void Fissures.')
+            await ctx.message.author.send('You are no longer being alerted for any Void Fissures.')
         except KeyError:
-            await ctx.send(ctx.message.author.mention + ' You are currently not being alerted.')
+            await ctx.message.author.send('You are currently not being alerted.')
 
     # THIS WILL BE PERIODICALLY CALLED on_ready
     # Check for new/specific void fissure missions for each user
@@ -119,7 +118,7 @@ class Fissures(commands.Cog):
         # Wait before making request
         await asyncio.sleep(delay)
         fissures = await sess.request('fissures')
-        if fissures is 0:
+        if fissures == 0:
             print("Could not retrieve data.")
             return
 
